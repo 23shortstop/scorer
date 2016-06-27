@@ -8,7 +8,7 @@ RSpec.describe League, type: :model do
   end
 
   describe 'associations' do
-    it { is_expected.to have_many :season }
+    it { is_expected.to have_many :seasons }
   end
 
 end
