@@ -35,6 +35,7 @@ group :development, :test do
   gem 'byebug'
   gem 'factory_girl_rails'
   gem 'ffaker'
+  gem 'faker'
   gem 'awesome_print'
   gem 'dotenv-rails'
   gem 'rspec-rails', '~> 3.0.0'
