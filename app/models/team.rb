@@ -3,4 +3,5 @@ class Team < ActiveRecord::Base
   validates :city, presence: true
 
   has_and_belongs_to_many :seasons
+  has_many :players
 end
