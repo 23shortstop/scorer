@@ -22,6 +22,7 @@ gem 'puma'
 gem 'rubocop', require: false
 gem 'redis'
 gem 'versionist'
+gem 'carrierwave'
 
 group :development do
   gem 'foreman'
