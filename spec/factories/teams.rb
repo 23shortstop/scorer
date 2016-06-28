@@ -1,8 +1,8 @@
 FactoryGirl.define do
   factory :team do
     team_name  { Faker::Team.name }
-    city       { Faker::Number.between(1900, 2100) }
-    logo       { FFaker::Address.city }
+    city       { Faker::Address.city }
+    logo       { Faker::Avatar.image }
     seasons    { build_list :season, 10 }
   end
 end
