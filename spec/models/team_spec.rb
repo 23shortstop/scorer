@@ -11,7 +11,8 @@ RSpec.describe Team, type: :model do
   describe 'associations' do
     it { is_expected.to have_and_belong_to_many :seasons }
     it { is_expected.to have_many :players }
-    it { is_expected.to have_many :games }
+    it { is_expected.to have_many :home_games }
+    it { is_expected.to have_many :away_games }
   end
 
 end

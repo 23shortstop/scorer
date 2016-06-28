@@ -11,10 +11,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160628013010) do
+ActiveRecord::Schema.define(version: 20160628020835) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "games", force: :cascade do |t|
+    t.integer  "home_team_id"
+    t.integer  "away_team_id"
+    t.integer  "season_id"
+    t.integer  "scorer_id"
+    t.datetime "date"
+  end
+
+  add_index "games", ["away_team_id"], name: "index_games_on_away_team_id", using: :btree
+  add_index "games", ["home_team_id"], name: "index_games_on_home_team_id", using: :btree
+  add_index "games", ["scorer_id"], name: "index_games_on_scorer_id", using: :btree
+  add_index "games", ["season_id"], name: "index_games_on_season_id", using: :btree
 
   create_table "leagues", force: :cascade do |t|
     t.string "league_name"
@@ -75,4 +88,6 @@ ActiveRecord::Schema.define(version: 20160628013010) do
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
 
+  add_foreign_key "games", "teams", column: "away_team_id"
+  add_foreign_key "games", "teams", column: "home_team_id"
 end
