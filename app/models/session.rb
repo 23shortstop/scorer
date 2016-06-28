@@ -1,10 +1,12 @@
 class Session
   include ActiveModel::Serialization
 
-  attr_reader :user, :token
+  belongs_to :authenticable, polymorphic: true
 
-  def initialize(user, token)
-    @user  = user
+  attr_reader :authenticable, :token
+
+  def initialize(authenticable, token)
+    @authenticable  = authenticable
     @token = token
   end
 end
