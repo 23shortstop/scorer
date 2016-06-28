@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160628004832) do
+ActiveRecord::Schema.define(version: 20160628013010) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,6 +29,12 @@ ActiveRecord::Schema.define(version: 20160628004832) do
 
   add_index "players", ["team_id"], name: "index_players_on_team_id", using: :btree
 
+  create_table "scorers", force: :cascade do |t|
+    t.string "name"
+    t.string "email"
+    t.string "password"
+  end
+
   create_table "seasons", force: :cascade do |t|
     t.integer "league_id"
     t.integer "year"
@@ -43,6 +49,16 @@ ActiveRecord::Schema.define(version: 20160628004832) do
 
   add_index "seasons_teams", ["season_id"], name: "index_seasons_teams_on_season_id", using: :btree
   add_index "seasons_teams", ["team_id"], name: "index_seasons_teams_on_team_id", using: :btree
+
+  create_table "sessions", force: :cascade do |t|
+    t.integer  "authenticable_id"
+    t.string   "authenticable_type"
+    t.string   "token"
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
+  end
+
+  add_index "sessions", ["authenticable_type", "authenticable_id"], name: "index_sessions_on_authenticable_type_and_authenticable_id", using: :btree
 
   create_table "teams", force: :cascade do |t|
     t.string "team_name"

@@ -1,4 +1,4 @@
-class Session
+class Session < ActiveRecord::Base
   include ActiveModel::Serialization
 
   belongs_to :authenticable, polymorphic: true
