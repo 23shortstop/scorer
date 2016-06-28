@@ -13,6 +13,7 @@ RSpec.describe Scorer, type: :model do
 
   describe 'associations' do
     it { is_expected.to have_many :sessions }
+    it { is_expected.to have_many :games }
   end
 
 end
