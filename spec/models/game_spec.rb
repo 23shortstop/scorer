@@ -5,8 +5,8 @@ RSpec.describe Game, type: :model do
 
   describe 'validations' do
     it { is_expected.to validate_presence_of :date }
-    it { is_expected.to validate_presence_of :home_team_id }
-    it { is_expected.to validate_presence_of :away_team_id }
+    it { is_expected.to validate_presence_of :home_team }
+    it { is_expected.to validate_presence_of :away_team }
     it { is_expected.to validate_presence_of :scorer }
     it { is_expected.to validate_presence_of :season }
   end
