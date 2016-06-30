@@ -9,6 +9,7 @@ Rails.application.routes.draw do
       resources :sessions, only: [:create, :destroy], path: "users/sessions"
 
       resources :teams, only: [:index, :show]
+      resources :seasons, only: [:index, :show]
     end
   end
 end
