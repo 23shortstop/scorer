@@ -1,7 +1,7 @@
 FactoryGirl.define do
   factory :team do
-    team_name  { Faker::Team.name }
-    city       { Faker::Address.city }
-    logo       { Faker::Avatar.image }
+    team_name  { FFaker::Company.name }
+    city       { FFaker::Address.city }
+    logo       { FFaker::Avatar.image }
   end
 end
