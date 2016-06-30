@@ -7,6 +7,8 @@ Rails.application.routes.draw do
       end
 
       resources :sessions, only: [:create, :destroy], path: "users/sessions"
+
+      resources :teams, only: [:index, :show]
     end
   end
 end
