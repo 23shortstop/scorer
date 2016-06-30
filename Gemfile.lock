@@ -4,6 +4,14 @@ GIT
   specs:
     dci (0.0.1)
 
+GIT
+  remote: https://git.yalantis.com/roman.tomilin/rails-token-auth.git
+  revision: 0cf322671c5c24dbf360ae9c45cabef5ff250b2e
+  specs:
+    token_auth (0.0.1)
+      rails (~> 4.2.4)
+      redis
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -256,6 +264,7 @@ DEPENDENCIES
   shoulda-matchers (~> 2.8.0)
   simplecov
   timecop
+  token_auth!
   versionist
   web-console (~> 2.0)
   webmock

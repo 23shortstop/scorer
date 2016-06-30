@@ -23,6 +23,7 @@ gem 'rubocop', require: false
 gem 'redis'
 gem 'versionist'
 gem 'carrierwave'
+gem 'token_auth', git: 'https://git.yalantis.com/roman.tomilin/rails-token-auth.git'
 
 group :development do
   gem 'foreman'
