@@ -11,4 +11,5 @@ class PlateAppearance < ActiveRecord::Base
   belongs_to :runner_on_first,  class_name: 'Player', foreign_key: 'runner_on_first_id'
   belongs_to :runner_on_second, class_name: 'Player', foreign_key: 'runner_on_second_id'
   belongs_to :runner_on_third,  class_name: 'Player', foreign_key: 'runner_on_third_id'
+  has_many :pitches
 end
