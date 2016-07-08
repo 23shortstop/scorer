@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160628020835) do
+ActiveRecord::Schema.define(version: 20160708083440) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,6 +32,24 @@ ActiveRecord::Schema.define(version: 20160628020835) do
   create_table "leagues", force: :cascade do |t|
     t.string "league_name"
   end
+
+  create_table "plate_appearances", force: :cascade do |t|
+    t.integer "game_id"
+    t.integer "inning"
+    t.integer "outs"
+    t.integer "batter_id"
+    t.integer "pitcher_id"
+    t.integer "runner_on_first_id"
+    t.integer "runner_on_second_id"
+    t.integer "runner_on_third_id"
+  end
+
+  add_index "plate_appearances", ["batter_id"], name: "index_plate_appearances_on_batter_id", using: :btree
+  add_index "plate_appearances", ["game_id"], name: "index_plate_appearances_on_game_id", using: :btree
+  add_index "plate_appearances", ["pitcher_id"], name: "index_plate_appearances_on_pitcher_id", using: :btree
+  add_index "plate_appearances", ["runner_on_first_id"], name: "index_plate_appearances_on_runner_on_first_id", using: :btree
+  add_index "plate_appearances", ["runner_on_second_id"], name: "index_plate_appearances_on_runner_on_second_id", using: :btree
+  add_index "plate_appearances", ["runner_on_third_id"], name: "index_plate_appearances_on_runner_on_third_id", using: :btree
 
   create_table "players", force: :cascade do |t|
     t.integer "team_id"
@@ -90,4 +108,9 @@ ActiveRecord::Schema.define(version: 20160628020835) do
 
   add_foreign_key "games", "teams", column: "away_team_id"
   add_foreign_key "games", "teams", column: "home_team_id"
+  add_foreign_key "plate_appearances", "players", column: "batter_id"
+  add_foreign_key "plate_appearances", "players", column: "pitcher_id"
+  add_foreign_key "plate_appearances", "players", column: "runner_on_first_id"
+  add_foreign_key "plate_appearances", "players", column: "runner_on_second_id"
+  add_foreign_key "plate_appearances", "players", column: "runner_on_third_id"
 end

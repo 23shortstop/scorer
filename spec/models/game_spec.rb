@@ -16,7 +16,7 @@ RSpec.describe Game, type: :model do
     it { is_expected.to belong_to :away_team }
     it { is_expected.to belong_to :scorer }
     it { is_expected.to belong_to :season }
-    it { is_expected.to have_meny :plate_appearences }
+    it { is_expected.to have_many :plate_appearances }
   end
 
 end
