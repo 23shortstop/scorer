@@ -6,5 +6,5 @@ class Player < ActiveRecord::Base
   mount_uploader :photo, ImageUploader
 
   belongs_to :team
-
+  has_many :game_events
 end
