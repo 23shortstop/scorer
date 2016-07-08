@@ -18,6 +18,7 @@ RSpec.describe PlateAppearance, type: :model do
     it { is_expected.to belong_to :runner_on_first }
     it { is_expected.to belong_to :runner_on_second }
     it { is_expected.to belong_to :runner_on_third }
+    it { is_expected.to have_many :pitches }
   end
 
 end
