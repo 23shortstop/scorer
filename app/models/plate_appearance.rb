@@ -13,4 +13,7 @@ class PlateAppearance < ActiveRecord::Base
   belongs_to :runner_on_third,  class_name: 'Player', foreign_key: 'runner_on_third_id'
   has_many :pitches
   has_many :game_events
+
+  has_one :offense_team, class_name: 'Team', through: :batter, source: 'team'
+  has_one :defense_team, class_name: 'Team', through: :pitcher, source: 'team'
 end
