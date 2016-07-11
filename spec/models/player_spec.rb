@@ -11,6 +11,7 @@ RSpec.describe Player, type: :model do
 
   describe 'associations' do
     it { is_expected.to belong_to :team }
+    it { is_expected.to have_many :game_events }
   end
 
 end
