@@ -56,7 +56,6 @@ RSpec.describe PlateAppearanceService do
         previous_plate_appearance.game_events.create!(
           outcome: :force_out, player: previous_batter)
       end
-      let (:lineup) { game.away_team_lineup }
 
       it 'is expect to switch teams' do
         expect(plate_appearance.inning).to eql previous_plate_appearance.inning
@@ -77,6 +76,7 @@ RSpec.describe PlateAppearanceService do
         previous_plate_appearance.game_events.create!(
           outcome: :force_out, player: previous_batter)
       end
+      let (:lineup) { game.away_team_lineup }
 
       it 'is expect to switch teams and increment innings' do
         expect(plate_appearance.inning).to eql (previous_plate_appearance.inning + 1)
