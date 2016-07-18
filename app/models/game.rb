@@ -1,12 +1,13 @@
 class Game < ActiveRecord::Base
-  validates :home_team, presence: true
-  validates :away_team, presence: true
+  validates :hosts, presence: true
+  validates :guests, presence: true
   validates :scorer, presence: true
   validates :season, presence: true
   validates :date, presence: true
 
-  belongs_to :home_team, class_name: 'Team', foreign_key: 'home_team_id'
-  belongs_to :away_team, class_name: 'Team', foreign_key: 'away_team_id'
+  belongs_to :hosts, class_name: 'Lineup', foreign_key: 'hosts_id'
+  belongs_to :guests, class_name: 'Lineup', foreign_key: 'guests_id'
+
   belongs_to :scorer
   belongs_to :season
   has_many :plate_appearances

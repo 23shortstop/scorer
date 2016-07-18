@@ -7,4 +7,6 @@ class Player < ActiveRecord::Base
 
   belongs_to :team
   has_many :game_events
+  has_many :lineup_players
+  has_many :lineups, through: :lineup_players
 end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160708094013) do
+ActiveRecord::Schema.define(version: 20160716113037) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,21 +23,34 @@ ActiveRecord::Schema.define(version: 20160708094013) do
   end
 
   create_table "games", force: :cascade do |t|
-    t.integer  "home_team_id"
-    t.integer  "away_team_id"
     t.integer  "season_id"
     t.integer  "scorer_id"
     t.datetime "date"
+    t.integer  "hosts_id"
+    t.integer  "guests_id"
   end
 
-  add_index "games", ["away_team_id"], name: "index_games_on_away_team_id", using: :btree
-  add_index "games", ["home_team_id"], name: "index_games_on_home_team_id", using: :btree
+  add_index "games", ["guests_id"], name: "index_games_on_guests_id", using: :btree
+  add_index "games", ["hosts_id"], name: "index_games_on_hosts_id", using: :btree
   add_index "games", ["scorer_id"], name: "index_games_on_scorer_id", using: :btree
   add_index "games", ["season_id"], name: "index_games_on_season_id", using: :btree
 
   create_table "leagues", force: :cascade do |t|
     t.string "league_name"
   end
+
+  create_table "lineup_players", force: :cascade do |t|
+    t.integer "batting_position"
+    t.integer "fielding_position"
+    t.integer "lineup_id"
+    t.integer "player_id"
+  end
+
+  create_table "lineups", force: :cascade do |t|
+    t.integer "team_id"
+  end
+
+  add_index "lineups", ["team_id"], name: "index_lineups_on_team_id", using: :btree
 
   create_table "pitches", force: :cascade do |t|
     t.integer "outcome"
@@ -117,8 +130,6 @@ ActiveRecord::Schema.define(version: 20160708094013) do
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
 
-  add_foreign_key "games", "teams", column: "away_team_id"
-  add_foreign_key "games", "teams", column: "home_team_id"
   add_foreign_key "plate_appearances", "players", column: "batter_id"
   add_foreign_key "plate_appearances", "players", column: "pitcher_id"
   add_foreign_key "plate_appearances", "players", column: "runner_on_first_id"
