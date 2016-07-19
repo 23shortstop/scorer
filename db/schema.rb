@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160716113037) do
+ActiveRecord::Schema.define(version: 20160719083300) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -66,6 +66,7 @@ ActiveRecord::Schema.define(version: 20160716113037) do
     t.integer "runner_on_first_id"
     t.integer "runner_on_second_id"
     t.integer "runner_on_third_id"
+    t.integer "half_inning"
   end
 
   add_index "plate_appearances", ["batter_id"], name: "index_plate_appearances_on_batter_id", using: :btree
