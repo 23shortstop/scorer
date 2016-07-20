@@ -4,7 +4,7 @@ RSpec.describe PlateAppearanceService do
 
   describe 'create next plate appearance' do
     subject(:plate_appearance) do
-      PlateAppearanceService.new(game).create_next_pa
+      PlateAppearanceService.new(game).create_next
       game.plate_appearances.last
     end
 

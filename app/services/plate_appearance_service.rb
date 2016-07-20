@@ -1,25 +1,36 @@
 class PlateAppearanceService
   def initialize(game)
     @game = game
+    @last_pa = @game.plate_appearances.last
   end
 
-  def create_next_pa
-    @last_pa = @game.plate_appearances.last
-    return create_new_inning_pa(1, 'top').save! unless @last_pa
+  def create_next
+    return build_new_inning(1, 'top').save! unless @last_pa
+    return build_new_inning(*get_next_half_inning).save! if inning_ended?
 
-    outs = @last_pa.outs + @last_pa.game_events.put_out.count
-    return create_new_inning_pa(*get_next_inning_data).save! if outs >= 3
-
-    @new_pa = @game.plate_appearances.build(
-      inning: @last_pa.inning, outs: outs, half_inning: @last_pa.half_inning,
-      batter: get_next_batter(@last_pa.batter, @last_pa.half_inning),
-      pitcher: get_pitcher(@last_pa.half_inning))
-
+    @new_pa = build_new(@outs)
     set_runners
     @new_pa.save!
   end
 
   private
+
+  def inning_ended?
+    outs_per_inning = 3
+    @outs = @last_pa.outs + @last_pa.game_events.put_out.count
+    @outs >= outs_per_inning
+  end
+
+  def build_new(outs, inning = @last_pa.inning, half = @last_pa.half_inning, last_batter = @last_pa.batter)
+    @game.plate_appearances.build(
+      inning: inning, outs: outs, half_inning: half,
+      batter: get_next_batter(last_batter, half),
+      pitcher: get_pitcher(half))
+  end
+
+  REACHED_FIRST_EVENTS = ['single', 'safe_on_first', 'hold_first', 'walk']
+  REACHED_SECOND_EVENTS = ['double', 'safe_on_second', 'hold_second']
+  REACHED_THIRD_EVENTS = ['triple', 'safe_on_third', 'hold_third']
 
   def set_runners
     runners = [@last_pa.runner_on_first, @last_pa.runner_on_second,
@@ -28,51 +39,51 @@ class PlateAppearanceService
     runners.each do |runner|
       last_event = @last_pa.game_events.where(player: runner).last
       case last_event.outcome
-      when *['single', 'safe_on_first', 'hold_first', 'walk']
-        @new_pa.runner_on_first = runner
-      when *['double', 'safe_on_second', 'hold_second']
-        @new_pa.runner_on_second = runner
-      when *['triple', 'safe_on_third', 'hold_third']
-        @new_pa.runner_on_third = runner
+      when *REACHED_FIRST_EVENTS then @new_pa.runner_on_first = runner
+      when *REACHED_SECOND_EVENTS then @new_pa.runner_on_second = runner
+      when *REACHED_THIRD_EVENTS then @new_pa.runner_on_third = runner
       end
     end
   end
 
   def get_next_batter(last_batter, half)
-    lineup_id = half == 'top' ? @game.guests.id : @game.hosts.id
+    offenders = get_offenders(half)
+    batting_order = offenders.batters
 
-    batting_order = Player.joins(:lineups, :lineup_players)
-    .where('lineups.id': lineup_id)
-    .order("lineup_players.batting_position")
+    get_next_or_first(batting_order, last_batter)
+  end
 
-    last_index = last_batter ? batting_order.index(last_batter) : -1
-    next_index = (last_index + 1) % 9
+  def get_offenders(half)
+    half == 'top' ? @game.guests : @game.hosts
+  end
 
-    batting_order[next_index]
+  def get_next_or_first(order, last)
+    last_index = last ? order.index(last) : -1
+    next_index = (last_index + 1) % order.size
+
+    order[next_index]
   end
 
   def get_pitcher(half)
-    lineup_id = half == 'top' ? @game.hosts.id : @game.guests.id
-
-    Player.joins(:lineups, :lineup_players)
-    .where('lineups.id': lineup_id)
-    .order("lineup_players.fielding_position").first
+    defenders = get_defenders(half)
+    defenders.fielders.first
   end
 
-  def get_next_inning_data
-    inning, half = case @last_pa.half_inning
+  def get_defenders(half)
+    half == 'top' ? @game.hosts : @game.guests
+  end
+
+  def get_next_half_inning
+    case @last_pa.half_inning
     when 'top' then [@last_pa.inning, :bottom]
-    when 'bottom' then [(@last_pa.inning + 1), :top]
+    when 'bottom' then [@last_pa.inning + 1, :top]
     end
   end
 
-  def create_new_inning_pa(inning, half)
+  def build_new_inning(inning, half)
     last_team_pa = @game.plate_appearances.where('half_inning': half).last
     last_batter = last_team_pa ? last_team_pa.batter : nil
 
-    @game.plate_appearances.build(
-      inning: inning, half_inning: half, outs: 0,
-      batter: get_next_batter(last_batter, half),
-      pitcher: get_pitcher(half))
+    build_new(0, inning, half, last_batter)
   end
 end
