@@ -1,9 +1,4 @@
-class PlateAppearanceService
-  def initialize(game)
-    @game = game
-    @last_pa = @game.plate_appearances.last
-  end
-
+class PlateAppearanceService < GameService
   def create_next
     return build_new_inning(1, 'top').save! unless @last_pa
     return build_new_inning(*get_next_half_inning).save! if inning_ended?
