@@ -10,15 +10,17 @@ class PlateAppearanceService < GameService
 
   private
 
+  OUTS_PER_INNING = 3
+
   def inning_ended?
-    outs_per_inning = 3
     @outs = @last_pa.outs + @last_pa.game_events.put_out.count
-    @outs >= outs_per_inning
+    @outs >= OUTS_PER_INNING
   end
 
-  def build_new(outs, inning = @last_pa.inning, half = @last_pa.half_inning, last_batter = @last_pa.batter)
+  def build_new(outs, inning_cout = @last_pa.inning,
+    half = @last_pa.half_inning, last_batter = @last_pa.batter)
     @game.plate_appearances.build(
-      inning: inning, outs: outs, half_inning: half,
+      inning: inning_cout, outs: outs, half_inning: half,
       batter: get_next_batter(last_batter, half),
       pitcher: get_pitcher(half))
   end
@@ -75,10 +77,10 @@ class PlateAppearanceService < GameService
     end
   end
 
-  def build_new_inning(inning, half)
+  def build_new_inning(inning_cout , half)
     last_team_pa = @game.plate_appearances.where('half_inning': half).last
     last_batter = last_team_pa ? last_team_pa.batter : nil
 
-    build_new(0, inning, half, last_batter)
+    build_new(0, inning_cout, half, last_batter)
   end
 end
