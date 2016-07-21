@@ -7,6 +7,7 @@ class GameEvent < ActiveRecord::Base
     :assist, :put_out,
     :single, :double, :triple, :home_run,
     :safe_on_first, :safe_on_second, :safe_on_third, :scored,
+    :hold_first, :hold_second, :hold_third,
     :walk,
     :sacrifice_fly, :sacrifice_bunt,
     :force_out, :tag_out, :fly_out, :fielders_choice

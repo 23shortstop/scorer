@@ -6,4 +6,7 @@ class Lineup < ActiveRecord::Base
   belongs_to :team
   has_many :lineup_players
   has_many :players, through: :lineup_players
+
+  has_many :batters, -> { order 'lineup_players.batting_position' }, through: :lineup_players, source: :player
+  has_many :fielders, -> { order 'lineup_players.fielding_position' }, through: :lineup_players, source: :player
 end
