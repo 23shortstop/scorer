@@ -4,20 +4,24 @@ RSpec.describe GameEventService do
   describe 'create game event' do
     subject(:game_events) do
       GameEventService.new(game)
-      .create(outcome, offender, defender, assistant)
+      .create(outcome, offender_base,
+        defender_position, assistant_position)
       plate_appearance.game_events
     end
 
-    let! (:game)             { create :game }
-    let! (:plate_appearance) { create :plate_appearance, game: game }
-    let! (:offender)         { create :player }
-    let! (:defender)         { create :player }
-    let! (:assistant)        { create :player }
+    let! (:game)               { create :game }
+    let! (:plate_appearance)   { create :plate_appearance, game: game, half_inning: 'top'}
+    let! (:offender_base)      { nil }
+    let! (:defender_position)  { rand(1..9) }
+    let! (:assistant_position) { rand(1..9) }
+    let  (:offender)           { plate_appearance.batter }
+    let  (:defender)           { game.hosts.fielders.get_by_position(defender_position) }
+    let  (:assistant)          { game.hosts.fielders.get_by_position(assistant_position) }
 
     context 'for a not out outcome' do
-      let! (:defender)  { nil }
-      let! (:assistant) { nil }
-      let  (:outcome)   { :single }
+      let! (:defender_position)  { nil }
+      let! (:assistant_position) { nil }
+      let  (:outcome)            { :single }
 
       it 'is espect to create one game event for offender' do
         expect(game_events.size).to eql 1
@@ -27,8 +31,8 @@ RSpec.describe GameEventService do
     end
 
     context 'for an out without assist' do
-      let! (:assistant) { nil }
-      let  (:outcome)   { :force_out }
+      let! (:assistant_position) { nil }
+      let  (:outcome)            { :force_out }
 
       it 'is espect to create events for offender and defender' do
         expect(game_events.size).to eql 2
