@@ -10,7 +10,7 @@ class GameEvent < ActiveRecord::Base
     :hold_first, :hold_second, :hold_third,
     :walk,
     :sacrifice_fly, :sacrifice_bunt,
-    :force_out, :tag_out, :fly_out, :fielders_choice
+    :strike_out, :force_out, :tag_out, :fly_out, :fielders_choice
   ]
 
   belongs_to :plate_appearance
