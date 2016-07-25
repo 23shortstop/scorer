@@ -21,14 +21,15 @@ class PitchService < GameService
     end
   end
 
+  FULL_BALL_COUNT = 3
+  FULL_STRIKE_COUNT = 2
+
   def ball_count_full?
-    full_ball_count = 3
-    @last_pa.pitches.ball.count == full_ball_count
+    @last_pa.pitches.ball.count == FULL_BALL_COUNT
   end
 
   def strike_count_full?
-    full_strike_count = 2
-    @last_pa.pitches.strikes.count >= full_strike_count
+    @last_pa.pitches.strikes.count >= FULL_STRIKE_COUNT
   end
 
   def create_game_event(outcome, defender_position = nil)
