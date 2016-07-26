@@ -1,9 +1,10 @@
 class PlateAppearanceService < GameService
   def create_next
-    return build_new_inning(1, 'top').save! unless @last_pa
-    return build_new_inning(*get_next_half_inning).save! if inning_ended?
+    return build_new(0).save! unless @last_pa
+    set_outs
+    return new_inning if inning_ended?
 
-    @new_pa = build_new(@outs)
+    @new_pa = build_new
     set_runners
     @new_pa.save!
   end
@@ -12,17 +13,38 @@ class PlateAppearanceService < GameService
 
   OUTS_PER_INNING = 3
 
-  def inning_ended?
+  def set_outs
     @outs = @last_pa.outs + @last_pa.game_events.put_out.count
+  end
+
+  def inning_ended?
     @outs >= OUTS_PER_INNING
   end
 
-  def build_new(outs, inning_cout = @last_pa.inning,
-    half = @last_pa.half_inning, last_batter = @last_pa.batter)
+  def new_inning
+    switch_half_inning
+    switch_teams
+    @outs = 0
+    build_new.save!
+  end
+
+  def switch_teams
+    @last_pa = @game.plate_appearances.where(
+      'half_inning': PlateAppearance.half_innings[@half]).last
+    @ofenders, @defenders = @defenders, @ofenders
+  end
+
+  def switch_half_inning
+    case @half
+    when 'top' then @half = 'bottom'
+    else @half = 'top'; @inning = @inning + 1
+    end
+  end
+
+  def build_new(outs = @outs)
     @game.plate_appearances.build(
-      inning: inning_cout, outs: outs, half_inning: half,
-      batter: get_next_batter(last_batter, half),
-      pitcher: get_pitcher(half))
+      inning: @inning, outs: outs, half_inning: @half,
+      batter: get_next_batter, pitcher: @defenders.fielders.first)
   end
 
   REACHED_FIRST_EVENTS = ['single', 'safe_on_first', 'hold_first', 'walk']
@@ -43,44 +65,11 @@ class PlateAppearanceService < GameService
     end
   end
 
-  def get_next_batter(last_batter, half)
-    offenders = get_offenders(half)
-    batting_order = offenders.batters
+  def get_next_batter
+    batting_order = @ofenders.batters
+    return batting_order.first unless @last_pa
+    last_batter_index = batting_order.index(@last_pa.batter)
 
-    get_next_or_first(batting_order, last_batter)
-  end
-
-  def get_offenders(half)
-    half == 'top' ? @game.guests : @game.hosts
-  end
-
-  def get_next_or_first(order, last)
-    last_index = last ? order.index(last) : -1
-    next_index = (last_index + 1) % order.size
-
-    order[next_index]
-  end
-
-  def get_pitcher(half)
-    defenders = get_defenders(half)
-    defenders.fielders.first
-  end
-
-  def get_defenders(half)
-    half == 'top' ? @game.hosts : @game.guests
-  end
-
-  def get_next_half_inning
-    case @last_pa.half_inning
-    when 'top' then [@last_pa.inning, :bottom]
-    when 'bottom' then [@last_pa.inning + 1, :top]
-    end
-  end
-
-  def build_new_inning(inning_cout , half)
-    last_team_pa = @game.plate_appearances.where('half_inning': half).last
-    last_batter = last_team_pa ? last_team_pa.batter : nil
-
-    build_new(0, inning_cout, half, last_batter)
+    batting_order.fetch(last_batter_index + 1, batting_order.first)
   end
 end

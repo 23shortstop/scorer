@@ -1,13 +1,17 @@
 class GameEventService < GameService
-  def create(outcome, offender, defender = nil, assistant = nil)
-    build(outcome, offender)
-    build_out(defender, assistant) if out?(outcome)
+  def create(outcome, offender_base = nil,
+    defender_position = nil, assistant_position = nil)
+    build(outcome, get_offender(offender_base))
+    if out?(outcome)
+      build_out(get_defender(defender_position),
+        get_defender(assistant_position))
+    end
     @last_pa.save!
   end
 
   private
 
-  OUT_EVENTS = [:sacrifice_fly, :sacrifice_bunt,
+  OUT_EVENTS = [:sacrifice_fly, :sacrifice_bunt, :strike_out,
                 :force_out, :tag_out, :fly_out]
 
   def out?(outcome)
@@ -25,5 +29,18 @@ class GameEventService < GameService
 
   def build_assist(assistant)
     build('assist', assistant)
+  end
+
+  def get_defender(defender_position)
+    @defenders.fielders.get_by_position(defender_position)
+  end
+
+  def get_offender(offender_base = nil)
+    case offender_base
+    when nil then @last_pa.batter
+    when 1 then @last_pa.runner_on_first
+    when 2 then @last_pa.runner_on_first
+    when 3 then @last_pa.runner_on_third
+    end
   end
 end
