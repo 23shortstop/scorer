@@ -1,5 +1,5 @@
 class GameEventService < GameService
-  def create(outcome, offender_base,
+  def create(outcome, offender_base = nil,
     defender_position = nil, assistant_position = nil)
     build(outcome, get_offender(offender_base))
     if out?(outcome)
@@ -11,7 +11,7 @@ class GameEventService < GameService
 
   private
 
-  OUT_EVENTS = [:sacrifice_fly, :sacrifice_bunt,
+  OUT_EVENTS = [:sacrifice_fly, :sacrifice_bunt, :strike_out,
                 :force_out, :tag_out, :fly_out]
 
   def out?(outcome)
