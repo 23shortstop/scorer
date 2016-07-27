@@ -2,14 +2,14 @@ require_relative "game_event_service"
 
 class PitchService < GameService
   def create(outcome)
-    build_new(outcome)
+    build_new_pitch(outcome)
     create_event(outcome)
     @last_pa.save!
   end
 
   private
 
-  def build_new(outcome)
+  def build_new_pitch(outcome)
     @last_pa.pitches.build(outcome: outcome)
   end
 
@@ -22,11 +22,12 @@ class PitchService < GameService
   end
 
   FULL_BALL_COUNT = 3
-  FULL_STRIKE_COUNT = 2
 
   def ball_count_full?
     @last_pa.pitches.ball.count == FULL_BALL_COUNT
   end
+
+  FULL_STRIKE_COUNT = 2
 
   def strike_count_full?
     @last_pa.pitches.strikes.count >= FULL_STRIKE_COUNT

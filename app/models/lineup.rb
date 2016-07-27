@@ -12,8 +12,6 @@ class Lineup < ActiveRecord::Base
   
   has_many :fielders, -> { order 'lineup_players.fielding_position' },
   through: :lineup_players, source: :player do
-    def get_by_position(position)
-      where(lineup_players: { fielding_position: position }).first
-    end
+    def get_by_position(position) where(lineup_players: { fielding_position: position }).first end
   end
 end
