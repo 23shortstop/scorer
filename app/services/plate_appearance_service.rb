@@ -29,11 +29,9 @@ class PlateAppearanceService < GameService
   end
 
   def switch_half_inning
-    if @half == 'top'
-      @half = 'bottom'
-    else
-      @half = 'top'
-      @inning = @inning + 1
+    case @half
+    when 'top'    then @half = 'bottom'
+    when 'bottom' then @half = 'top'; @inning = @inning + 1
     end
   end
 
