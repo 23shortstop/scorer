@@ -7,15 +7,14 @@ RSpec.describe PitchService do
       plate_appearance.pitches.last
     end
 
-    let! (:game)             { create :game }
     let! (:plate_appearance) do
-      create :plate_appearance, game: game,
-      batter: batter, half_inning: :top
+      create :plate_appearance, game: game, batter: batter, half_inning: :top
     end
-    let  (:batter)           { create :player }
+    let! (:game)   { create :game }
+    let  (:batter) { game.guests.players.sample }
 
     context 'for an outcome' do
-      let  (:outcome)   { Pitch.outcomes.keys.sample }
+      let  (:outcome) { Pitch.outcomes.keys.sample }
 
       it 'is espect to create a pitch' do
         expect(pitch.persisted?).to be_truthy
@@ -25,10 +24,7 @@ RSpec.describe PitchService do
     end
 
     context 'for a fourth ball' do
-      let! (:pitches) do
-        create_list(:pitch, 3, plate_appearance: plate_appearance,
-          outcome: :ball)
-      end
+      let! (:pitches) { create_list(:pitch, 3, plate_appearance: plate_appearance, outcome: :ball) }
       let  (:outcome) { 'ball' }
 
       it 'is espect to create a walk game event' do
@@ -37,15 +33,13 @@ RSpec.describe PitchService do
         expect(pitch.outcome).to eql outcome
         expect(plate_appearance.game_events.size).to eql 1
         expect(plate_appearance.game_events.where(
-          outcome: GameEvent.outcomes[:walk],
-          player: batter).size).to eql 1
+          outcome: GameEvent.outcomes[:walk], player: batter).size).to eql 1
       end
     end
 
     context 'for an third strike' do
       let! (:pitches) do
-        create_list(:pitch, 2, plate_appearance: plate_appearance,
-          outcome: :strike)
+        create_list(:pitch, 2, plate_appearance: plate_appearance, outcome: :strike)
       end
       let  (:outcome) { 'strike' }
       let  (:catcher) { game.hosts.fielders.get_by_position(2) }
@@ -56,11 +50,9 @@ RSpec.describe PitchService do
         expect(pitch.outcome).to eql outcome
         expect(plate_appearance.game_events.size).to eql 2
         expect(plate_appearance.game_events.where(
-          outcome: GameEvent.outcomes[:strike_out],
-          player: batter).size).to eql 1
+          outcome: GameEvent.outcomes[:strike_out], player: batter).size).to eql 1
         expect(plate_appearance.game_events.where(
-          outcome: GameEvent.outcomes[:put_out],
-          player: catcher).size).to eql 1
+          outcome: GameEvent.outcomes[:put_out], player: catcher).size).to eql 1
       end
     end
   end

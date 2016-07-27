@@ -8,14 +8,10 @@ RSpec.describe PlateAppearanceService do
       game.plate_appearances.last
     end
 
-    let (:game) { create :game }
-    let (:previous_batter) { batting_order.sample }
-    let (:batting_order) do
-      game.guests.lineup_players.order("batting_position").map { |b| b.player }
-    end
-    let (:pitcher) do
-      game.hosts.lineup_players.order("fielding_position").first.player
-    end
+    let (:game)             { create :game }
+    let (:previous_batter)  { batting_order.sample }
+    let (:batting_order)    { game.guests.batters }
+    let (:pitcher)          { game.hosts.fielders.first }
 
     context 'for a new game' do
       it 'is espect to create the first plate appearance' do
@@ -37,11 +33,10 @@ RSpec.describe PlateAppearanceService do
         create(:plate_appearance, batter: previous_batter, game: game, half_inning: :top)
       end
       let! (:event) do
-        previous_plate_appearance.game_events.create!(
-          outcome: :double, player: previous_batter)
+        previous_plate_appearance.game_events.create!(outcome: :double, player: previous_batter)
       end
       let (:current_batter_index) { (batting_order.index(previous_batter) + 1) % 9 }
-      let (:current_batter) { batting_order[current_batter_index] }
+      let (:current_batter)       { batting_order[current_batter_index] }
 
       it 'is expect to create a new plate appearance and set runners on bases' do
         expect(plate_appearance.runner_on_first).to eql nil
@@ -53,8 +48,7 @@ RSpec.describe PlateAppearanceService do
 
     context 'after the third out in the top of the inning' do
       let! (:previous_plate_appearance) do
-        create(:plate_appearance, batter: previous_batter,
-          outs: 2, game: game, half_inning: :top)
+        create(:plate_appearance, batter: previous_batter, outs: 2, game: game, half_inning: :top)
       end
       let! (:event) do
         create(:game_event, plate_appearance: previous_plate_appearance, outcome: :put_out)

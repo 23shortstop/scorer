@@ -15,8 +15,8 @@ class PitchService < GameService
 
   def create_event(outcome)
     case outcome
-    when 'ball' then create_game_event(:walk) if ball_count_full?
-    when 'strike' then create_strike_out if strike_count_full?
+    when 'ball'         then create_game_event(:walk) if ball_count_full?
+    when 'strike'       then create_strike_out if strike_count_full?
     when 'hit_by_pitch' then create_game_event(:walk)
     end
   end
@@ -35,7 +35,7 @@ class PitchService < GameService
 
   def create_game_event(outcome, defender_position = nil)
     service = GameEventService.new(@game)
-    service.create(outcome, nil, defender_position)
+    service.create({ outcome: outcome, defender_position: defender_position })
   end
 
   CATCHER_POSITION = 2

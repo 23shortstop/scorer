@@ -3,18 +3,19 @@ require "rails_helper"
 RSpec.describe GameEventService do
   describe 'create game event' do
     subject(:game_events) do
-      GameEventService.new(game)
-      .create(outcome, offender_base,
-        defender_position, assistant_position)
+      GameEventService.new(game).create({ outcome: outcome, offender_base: offender_base,
+        defender_position: defender_position, assistant_position: assistant_position })
       plate_appearance.game_events
     end
 
+    let! (:plate_appearance) do
+      create :plate_appearance, game: game, half_inning: :top, batter: offender
+    end
     let! (:game)               { create :game }
-    let! (:plate_appearance)   { create :plate_appearance, game: game, half_inning: 'top'}
     let! (:offender_base)      { nil }
     let! (:defender_position)  { rand(1..9) }
     let! (:assistant_position) { rand(1..9) }
-    let  (:offender)           { plate_appearance.batter }
+    let  (:offender)           { game.guests.players.sample }
     let  (:defender)           { game.hosts.fielders.get_by_position(defender_position) }
     let  (:assistant)          { game.hosts.fielders.get_by_position(assistant_position) }
 

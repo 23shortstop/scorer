@@ -1,13 +1,21 @@
 class GameEventService < GameService
-  def create(outcome, offender_base = nil, defender_position = nil, assistant_position = nil)
+  def create(*params)
+    params.each do |param|
+      create_particular(param[:outcome], param[:offender_base], param[:defender_position],
+        param[:assistant_position])
+    end
+    @last_pa.save!
+    create_next_pa if pa_ended?(params)
+  end
+
+  private
+
+  def create_particular(outcome, offender_base, defender_position, assistant_position)
     build_game_event(outcome, offenders(offender_base))
     if out_event?(outcome)
       build_out_event(defenders(defender_position), defenders(assistant_position))
     end
-    @last_pa.save!
   end
-
-  private
 
   OUT_EVENTS = [:sacrifice_fly, :sacrifice_bunt, :strike_out, :force_out, :tag_out, :fly_out]
 
@@ -39,5 +47,14 @@ class GameEventService < GameService
     when 2 then @last_pa.runner_on_first
     when 3 then @last_pa.runner_on_third
     end
+  end
+
+  def create_next_pa
+    service = PlateAppearanceService.new(@game)
+    service.create_next
+  end
+
+  def pa_ended?(params)
+    (params.map { |p| p[:offender_base] }).include?(nil)
   end
 end
