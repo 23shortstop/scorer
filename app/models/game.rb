@@ -5,6 +5,8 @@ class Game < ActiveRecord::Base
   validates :season, presence: true
   validates :date, presence: true
 
+  enum status: [:not_started, :in_progress, :ended]
+
   belongs_to :hosts, class_name: 'Lineup', foreign_key: 'hosts_id'
   belongs_to :guests, class_name: 'Lineup', foreign_key: 'guests_id'
 
