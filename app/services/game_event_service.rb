@@ -1,14 +1,18 @@
 class GameEventService < GameService
   def create(*params)
+    create_list(params)
+    @last_pa.save!
+    change_game_state(params)
+  end
+
+  private
+
+  def create_list(params)
     params.each do |param|
       create_particular(param[:outcome], param[:offender_base], param[:defender_position],
         param[:assistant_position])
     end
-    @last_pa.save!
-    create_next_pa if pa_ended?(params)
   end
-
-  private
 
   def create_particular(outcome, offender_base, defender_position, assistant_position)
     build_game_event(outcome, offenders(offender_base))
@@ -46,6 +50,13 @@ class GameEventService < GameService
     when 1 then @last_pa.runner_on_first
     when 2 then @last_pa.runner_on_first
     when 3 then @last_pa.runner_on_third
+    end
+  end
+
+  def change_game_state(params)
+    case
+    when game_ended?       then @game.ended!
+    when pa_ended?(params) then create_next_pa
     end
   end
 
