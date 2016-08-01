@@ -10,7 +10,7 @@ RSpec.describe PitchService do
     let! (:plate_appearance) do
       create :plate_appearance, game: game, batter: batter, half_inning: :top
     end
-    let! (:game)   { create :game }
+    let! (:game)   { create :game, status: :in_progress }
     let  (:batter) { game.guests.players.sample }
 
     context 'for an outcome' do
