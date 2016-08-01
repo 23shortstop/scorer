@@ -15,6 +15,7 @@ Rails.application.routes.draw do
       resources :games do
         resources :lineups, only: [:create]
         resources :game_events, only: [:create]
+        resources :pitches, only: [:create]
       end
     end
   end
