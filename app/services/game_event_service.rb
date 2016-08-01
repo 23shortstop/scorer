@@ -1,5 +1,6 @@
 class GameEventService < GameService
   OUT_EVENTS = [:sacrifice_fly, :sacrifice_bunt, :strike_out, :force_out, :tag_out, :fly_out]
+  BATTER_BASE = nil
 
   def create(*params)
     create_list(params)
@@ -47,10 +48,10 @@ class GameEventService < GameService
 
   def offenders(offender_base)
     case offender_base
-    when nil then @last_pa.batter
-    when 1 then @last_pa.runner_on_first
-    when 2 then @last_pa.runner_on_first
-    when 3 then @last_pa.runner_on_third
+    when BATTER_BASE then @last_pa.batter
+    when 1           then @last_pa.runner_on_first
+    when 2           then @last_pa.runner_on_first
+    when 3           then @last_pa.runner_on_third
     end
   end
 
@@ -67,6 +68,6 @@ class GameEventService < GameService
   end
 
   def pa_ended?(params)
-    (params.map { |p| p[:offender_base] }).include?(nil)
+    (params.map { |p| p[:offender_base] }).include?(BATTER_BASE)
   end
 end
