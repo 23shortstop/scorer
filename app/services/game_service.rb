@@ -29,15 +29,15 @@ class GameService
     @runners ||= if @last_pa
       list = [@last_pa.runner_on_first, @last_pa.runner_on_second,
         @last_pa.runner_on_third, @last_pa.batter].compact
-
-      Hash[list.map do |runner|
+      
+      (list.map do |runner|
         last_event = @last_pa.game_events.where(player: runner).last
-        case last_event.outcome
+        case last_event.try(:outcome)
         when *REACHED_FIRST_EVENTS then [:runner_on_first, runner]
         when *REACHED_SECOND_EVENTS then [:runner_on_second, runner]
         when *REACHED_THIRD_EVENTS then [:runner_on_third, runner]
         end
-      end]
+      end).compact.to_h
     else
       {}
     end
