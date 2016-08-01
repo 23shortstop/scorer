@@ -1,8 +1,11 @@
 class GameEventService < GameService
+  OUT_EVENTS = [:sacrifice_fly, :sacrifice_bunt, :strike_out, :force_out, :tag_out, :fly_out]
+
   def create(*params)
     create_list(params)
     @last_pa.save!
     change_game_state(params)
+    game_state
   end
 
   private
@@ -20,8 +23,6 @@ class GameEventService < GameService
       build_out_event(defenders(defender_position), defenders(assistant_position))
     end
   end
-
-  OUT_EVENTS = [:sacrifice_fly, :sacrifice_bunt, :strike_out, :force_out, :tag_out, :fly_out]
 
   def out_event?(outcome)
     OUT_EVENTS.include? outcome

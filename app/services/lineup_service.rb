@@ -4,6 +4,7 @@ class LineupService < GameService
     fill_lineup(@game.guests, guests)
     start_game
     @game.save!
+    game_state
   end
 
   private
