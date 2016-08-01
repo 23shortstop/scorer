@@ -2,7 +2,7 @@ class Api::V1::LineupsController < Api::V1::BaseController
   before_action :set_game
 
   def create
-    game_state = create_lineups()
+    game_state = create_lineups
     render json: game_state
   end
 

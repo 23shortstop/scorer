@@ -26,7 +26,7 @@ class GameEventService < GameService
   end
 
   def out_event?(outcome)
-    OUT_EVENTS.include? outcome
+    OUT_EVENTS.include? outcome.to_sym
   end
 
   def build_game_event(outcome, player)
