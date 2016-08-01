@@ -19,7 +19,7 @@ class GameServiceSerializer < ActiveModel::Serializer
       half_inning: object.half,
       outs: object.outs,
       pitcher: plate_appearance.pitcher.name,
-      pitches: plate_appearance.pitcher.pitches.in_game(object.game),
+      pitches: plate_appearance.pitcher.pitches.in_game(object.game).count,
       batter: plate_appearance.batter.name,
       balls: plate_appearance.pitches.balls.count,
       strikes: [GameService::FULL_STRIKE_COUNT, plate_appearance.pitches.strikes.count].min,
