@@ -11,7 +11,7 @@ RSpec.describe GameEventService do
     let! (:plate_appearance) do
       create :plate_appearance, game: game, half_inning: :top, batter: offender
     end
-    let! (:game)               { create :game }
+    let! (:game)               { create :game, status: :in_progress }
     let! (:offender_base)      { nil }
     let! (:defender_position)  { rand(1..9) }
     let! (:assistant_position) { rand(1..9) }
@@ -57,6 +57,55 @@ RSpec.describe GameEventService do
           player: assistant).size).to eql 1
       end
     end
+  end
 
+  describe 'end game' do
+    subject(:create_game_event) do
+      GameEventService.new(game).create({ outcome: outcome, defender_position: 3 })
+    end
+
+    let! (:preview_pa) { create :plate_appearance, game: game, half_inning: preview_half }
+    let! (:plate_appearance) do
+      create :plate_appearance, game: game, inning: 9, half_inning: current_half, outs: 2
+    end
+    let! (:game) { create :game, status: :in_progress }
+
+    context 'when hosts have a higher score after the end of the top 9 inning' do
+      let  (:current_half) { :top }
+      let  (:preview_half) { :bottom }
+      let  (:outcome)      { :tag_out }
+      let! (:hosts_run)    { create :game_event, plate_appearance: preview_pa, outcome: :scored }
+
+      it 'is expect to end the game' do
+        create_game_event
+
+        expect(game.status).to eql 'ended'
+      end
+    end
+
+    context 'when hosts scored to have a higher score in the bottom of 9 inning (walk-off)' do
+      let  (:current_half) { :bottom }
+      let  (:preview_half) { :top }
+      let  (:outcome)      { :home_run }
+
+      it 'is expect to end the game' do
+        create_game_event
+
+        expect(game.status).to eql 'ended'
+      end
+    end
+
+    context 'when guests have a higher score after the end of the bottom 9 inning' do
+      let  (:current_half) { :bottom }
+      let  (:preview_half) { :top }
+      let  (:outcome)      { :tag_out }
+      let! (:guests_run)   { create :game_event, plate_appearance: preview_pa, outcome: :scored }
+
+      it 'is expect to end the game' do
+        create_game_event
+
+        expect(game.status).to eql 'ended'
+      end
+    end
   end
 end
