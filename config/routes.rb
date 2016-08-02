@@ -11,6 +11,12 @@ Rails.application.routes.draw do
       resources :teams, only: [:index, :show]
       resources :seasons, only: [:index, :show]
       resources :games, only: [:index, :show]
+
+      resources :games do
+        resources :lineups, only: [:create]
+        resources :game_events, only: [:create]
+        resources :pitches, only: [:create]
+      end
     end
   end
 end
