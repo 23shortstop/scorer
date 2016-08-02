@@ -1,17 +1,11 @@
 class PlateAppearanceService < GameService
   def create_next
     start_next_half_inning if half_inning_ended?
-    set_runners
-    new_pa.save!
+    next_pa.save!
+    game_state
   end
 
   private
-
-  def outs
-    @outs ||= @last_pa ? @last_pa.outs + @last_pa.game_events.put_out.count : 0
-  end
-
-  OUTS_PER_HALF_INNING = 3
 
   def half_inning_ended?
     outs >= OUTS_PER_HALF_INNING
@@ -31,33 +25,14 @@ class PlateAppearanceService < GameService
   def switch_half_inning
     case @half
     when 'top'    then @half = 'bottom'
-    when 'bottom' then @half = 'top'; @inning = @inning + 1
+    when 'bottom' then @half = 'top'; @inning += 1
     end
   end
 
-  def new_pa
-    @new_pa ||= @game.plate_appearances.build(inning: @inning, outs: outs, half_inning: @half,
-      batter: next_batter, pitcher: @defenders.fielders.first)
-  end
-
-  REACHED_FIRST_EVENTS = ['single', 'safe_on_first', 'hold_first', 'walk']
-  REACHED_SECOND_EVENTS = ['double', 'safe_on_second', 'hold_second']
-  REACHED_THIRD_EVENTS = ['triple', 'safe_on_third', 'hold_third']
-
-  def set_runners
-    if @last_pa
-      runners = [@last_pa.runner_on_first, @last_pa.runner_on_second,
-        @last_pa.runner_on_third, @last_pa.batter].compact!
-
-      runners.each do |runner|
-        last_event = @last_pa.game_events.where(player: runner).last
-        case last_event.outcome
-        when *REACHED_FIRST_EVENTS then new_pa.runner_on_first = runner
-        when *REACHED_SECOND_EVENTS then new_pa.runner_on_second = runner
-        when *REACHED_THIRD_EVENTS then new_pa.runner_on_third = runner
-        end
-      end
-    end
+  def next_pa
+    @game.plate_appearances.build(batter: next_batter, pitcher: @defenders.fielders.first,
+      runner_on_first: runners[:runner_on_first], runner_on_second: runners[:runner_on_second],
+      runner_on_third: runners[:runner_on_third], inning: @inning, outs: outs, half_inning: @half)
   end
 
   def next_batter
