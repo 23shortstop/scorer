@@ -8,7 +8,7 @@ RSpec.describe PlateAppearanceService do
       game.plate_appearances.last
     end
 
-    let (:game)             { create :game }
+    let (:game)             { create :game, status: :in_progress }
     let (:previous_batter)  { batting_order.sample }
     let (:batting_order)    { game.guests.batters }
     let (:pitcher)          { game.hosts.fielders.first }
