@@ -6,6 +6,6 @@ class Pitch < ActiveRecord::Base
 
   belongs_to :plate_appearance
 
-  scope :strikes, -> {
-    where(outcome: [outcomes[:strike], outcomes[:foul]]) }
+  scope :strikes, -> { where(outcome: [outcomes[:strike], outcomes[:foul]]) }
+  scope :balls, -> { where(outcome: outcomes[:ball]) }
 end
