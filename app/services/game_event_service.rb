@@ -6,19 +6,16 @@ class GameEventService < GameService
     create_list(params)
     @last_pa.save!
     change_game_state(params)
-    game_state
   end
 
   private
 
   def create_list(params)
-    params.each do |param|
-      create_particular(param[:outcome], param[:offender_base], param[:defender_position],
-        param[:assistant_position])
-    end
+    params.each { |param| create_particular(param.symbolize_keys) }
   end
 
-  def create_particular(outcome, offender_base, defender_position, assistant_position)
+  def create_particular(outcome:, offender_base: nil,
+    defender_position: nil, assistant_position: nil)
     build_game_event(outcome, offenders(offender_base))
     if out_event?(outcome)
       build_out_event(defenders(defender_position), defenders(assistant_position))
@@ -68,6 +65,6 @@ class GameEventService < GameService
   end
 
   def pa_ended?(params)
-    (params.map { |p| p[:offender_base] }).include?(BATTER_BASE)
+    params.map { |p| p[:offender_base] }.include?(BATTER_BASE)
   end
 end

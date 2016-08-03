@@ -2,7 +2,6 @@ class PlateAppearanceService < GameService
   def create_next
     start_next_half_inning if half_inning_ended?
     next_pa.save!
-    game_state
   end
 
   private
@@ -31,8 +30,7 @@ class PlateAppearanceService < GameService
 
   def next_pa
     @game.plate_appearances.build(batter: next_batter, pitcher: @defenders.fielders.first,
-      runner_on_first: runners[:runner_on_first], runner_on_second: runners[:runner_on_second],
-      runner_on_third: runners[:runner_on_third], inning: @inning, outs: outs, half_inning: @half)
+      **runners_on_bases, inning: @inning, outs: outs, half_inning: @half)
   end
 
   def next_batter

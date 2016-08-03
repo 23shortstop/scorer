@@ -13,7 +13,9 @@ class Api::V1::PitchesController < Api::V1::BaseController
   end
 
   def create_pitch
-    PitchService.new(@game).create(pitch_params)
+    service = PitchService.new(@game)
+    service.create(pitch_params)
+    service.game_state
   end
 
   def pitch_params

@@ -7,7 +7,6 @@ class PitchService < GameService
     build_new_pitch(outcome)
     create_event(outcome)
     @last_pa.save!
-    game_state
   end
 
   private

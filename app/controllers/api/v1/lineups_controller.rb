@@ -13,7 +13,9 @@ class Api::V1::LineupsController < Api::V1::BaseController
   end
 
   def create_lineups
-    LineupService.new(@game).create(*lineups_params)
+    service = LineupService.new(@game)
+    service.create(*lineups_params)
+    service.game_state
   end
 
   def lineups_params

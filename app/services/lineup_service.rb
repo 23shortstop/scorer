@@ -4,14 +4,12 @@ class LineupService < GameService
     fill_lineup(@game.guests, guests)
     start_game
     @game.save!
-    game_state
   end
 
   private
 
   def fill_lineup(lineup, players)
-    players.each { |player| lineup.lineup_players.build(batting_position: player[:batting_position],
-      fielding_position: player[:fielding_position], player_id: player[:player_id]) }
+    players.each { |player| lineup.lineup_players.build(player.symbolize_keys) }
     lineup.save!
   end
 

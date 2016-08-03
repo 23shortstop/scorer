@@ -27,25 +27,35 @@ class GameService
 
   def runners
     @runners ||= if @last_pa
-      list = [@last_pa.runner_on_first, @last_pa.runner_on_second,
+      [@last_pa.runner_on_first, @last_pa.runner_on_second,
         @last_pa.runner_on_third, @last_pa.batter].compact
-      
-      (list.map do |runner|
-        last_event = @last_pa.game_events.where(player: runner).last
-        case last_event.try(:outcome)
-        when *REACHED_FIRST_EVENTS then [:runner_on_first, runner]
-        when *REACHED_SECOND_EVENTS then [:runner_on_second, runner]
-        when *REACHED_THIRD_EVENTS then [:runner_on_third, runner]
-        end
-      end).compact.to_h
-    else
-      {}
-    end
+      else
+        []
+      end
   end
 
-  def guests_score () @game.runs.guests.count end
+  def last_outcome(runner)
+    game_event = @last_pa.game_events.where(player: runner).last
+    game_event.try(:outcome)
+  end
 
-  def hosts_score () @game.runs.hosts.count end
+  def runners_on_bases
+    runners.map do |runner|
+      case last_outcome(runner)
+      when *REACHED_FIRST_EVENTS then [:runner_on_first, runner]
+      when *REACHED_SECOND_EVENTS then [:runner_on_second, runner]
+      when *REACHED_THIRD_EVENTS then [:runner_on_third, runner]
+      end
+    end.compact.to_h
+  end
+
+  def guests_score
+    @game.runs.guests.count
+  end
+
+  def hosts_score
+    @game.runs.hosts.count
+  end
 
   private
 
@@ -55,8 +65,10 @@ class GameService
 
   def set_team_roles
     @ofenders, @defenders = case @half
-    when 'top'    then [@game.guests, @game.hosts]
-    when 'bottom' then [@game.hosts, @game.guests]
+    when 'top'
+      [@game.guests, @game.hosts]
+    when 'bottom'
+      [@game.hosts, @game.guests]
     end
   end
 

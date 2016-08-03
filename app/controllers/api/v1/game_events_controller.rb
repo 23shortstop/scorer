@@ -13,7 +13,9 @@ class Api::V1::GameEventsController < Api::V1::BaseController
   end
 
   def create_game_event
-    GameEventService.new(@game).create(*game_event_params)
+    service = GameEventService.new(@game)
+    service.create(*game_event_params)
+    service.game_state
   end
 
   def game_event_params

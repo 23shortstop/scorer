@@ -12,6 +12,8 @@ class Player < ActiveRecord::Base
   has_many :lineups, through: :lineup_players
 
   has_many :pitches, through: :plate_appearances_as_pitcher do
-    def in_game(game) where('plate_appearances.game_id': game.id) end
+    def in_game(game)
+      where('plate_appearances.game_id': game.id)
+    end
   end
 end
