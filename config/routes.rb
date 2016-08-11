@@ -7,6 +7,16 @@ Rails.application.routes.draw do
       end
 
       resources :sessions, only: [:create, :destroy], path: "users/sessions"
+
+      resources :teams, only: [:index, :show]
+      resources :seasons, only: [:index, :show]
+      resources :games, only: [:index, :show]
+
+      resources :games do
+        resources :lineups, only: [:create]
+        resources :game_events, only: [:create]
+        resources :pitches, only: [:create]
+      end
     end
   end
 end

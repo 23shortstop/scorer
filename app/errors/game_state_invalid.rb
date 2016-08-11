@@ -1,0 +1,2 @@
+class GameStateInvalid < StandartError
+end
